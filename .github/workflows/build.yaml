@@ -5,8 +5,10 @@ on:
     branches:
       - master
 
-env:
-  IMAGE_NAME: menci/syzoj-web
+env:  
+   REPO_URL: "longyitongxue/longyitongxue.github.io" 
+   BUILD_PATH: ".vitepress/dist" 
+   CUSTOM_DOMAIN: "lloj.iakioi.com"  
 
 jobs:
   build:
