@@ -1,0 +1,150 @@
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>P1001 A+B Problem - 大炮打蚊子法</title>
+<script>
+        MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            },
+            svg: { fontCache: 'global' }
+        };
+    </script>
+<style>
+        .tex-span {
+            font-family: 'Times New Roman', serif;
+        }
+    </style>
+<script type="text/javascript" id="MathJax-script" async
+        src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js">
+    </script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script>hljs.highlightAll();</script>
+</head>
+
+<body>
+
+<p><font size="1"><a href="../index.html">首页</a>&gt<a href="index.html">题解</a>&gt<a href="P1001 A+B Problem - 大炮打蚊子法.html">P1001 A+B Problem - 大炮打蚊子法</a></font></p>
+<h1>P1001 A+B Problem - 大炮打蚊子法</h1>
+
+<font size="1" color="gray"><span class="tex-span">2025-05-10 11:35</span></font>
+
+
+<p>Update on 2025/5/10：出了点小问题</p>
+
+<p><a href="https://www.luogu.com.cn/problem/P1001">Question's door</a></p>
+
+<h2>大炮思路</h2>
+
+<p>学了高精度，回来做普通的低级 $a+b$ 了！</p>
+
+<p>不过这道题，考虑到负数情况，所以，我们需要附上高精减的代码。</p>
+
+<p>如果 $a$ 和 $b$ 都为负数，那么输出一个负号，后面接着 $\left|a\right|+\left|b\right|$。</p>
+
+<p>如果 $a,b$ 其中一个为负数，如果 $a$ 是负数，输出 $b-a$，反之输出 $a-b$。</p>
+
+<p>剩余情况直接 $a+b$ 即可。</p>
+
+<p>首先，范围只有 $10^9$ 之大，所以我们数组最多最多也就开个 $9$ 的大小。不过保险起见，开大一点也不是不可以。</p>
+
+<p>其次，我们按照竖式的方法，对齐个位（幸好没小数点）（如下）</p>
+
+$$
+\begin{align}
+&&10000154&\\
++&&02551441&\\
+&&\overline{\quad\quad12551595}&
+\end{align}
+$$
+$$
+\begin{align}
+&&114514&\\
+-&&111111&\\
+&&\overline{\quad\quad003403}&
+\end{align}
+$$
+
+<p>先处理加减法，然后，如果有进位或退位，后面再处理。接着不能有前导零，有就删，最后反着输出结果（因为对齐了个位需要倒着对齐，到最后还得翻转过来）。</p>
+
+<h2><a href="https://www.luogu.com.cn/record/216601942">整活代码</a></h2>
+<pre><code class="language-cpp">#include&lt;iostream&gt;
+#include&lt;cstdio&gt;
+using namespace std;
+string add(string x,string y){
+    string ans;
+    int a[15]={},b[15]={},c[15]={};
+    int jw,lena=x.size(),lenb=y.size(),lenc;
+    for(int i=1;i&lt;=lena;i++){
+        a[i]=x[lena-i]-'0';
+    }
+    for(int i=1;i&lt;=lenb;i++){
+        b[i]=y[lenb-i]-'0';
+    }
+    lenc=max(lena,lenb);
+    for(int i=1;i&lt;=lenc;i++){
+        c[i]=a[i]+b[i];
+    }
+    for(int i=1;i&lt;=lenc;i++){
+        c[i+1]+=(c[i]/10);
+        c[i]%=10;
+    }
+    if(c[lenc+1]!=0)lenc++;
+    while(c[lenc]==0&amp;&amp;lenc&gt;1)lenc--; 
+    for(int i=lenc;i&gt;=1;i--){
+        ans+=char(c[i]+'0');
+    }
+    return ans;
+}
+string sub(string x,string y){
+    string ans;
+    if(x.size()&lt;y.size()||(x.size()==y.size()&amp;&amp;x&lt;y)){
+        swap(x,y);
+        ans="-";
+    }
+    int a[15]={},b[15]={},c[15]={};
+    int lena=x.size(),lenb=y.size(),lenc;
+    for(int i=1;i&lt;=lena;i++){
+        a[i]=x[lena-i]-'0';
+    }
+    for(int i=1;i&lt;=lenb;i++){
+        b[i]=y[lenb-i]-'0';
+    }
+    lenc=max(lena,lenb);
+    for(int i=1;i&lt;=lenc;i++){
+        if(a[i]&lt;b[i]){
+            a[i]+=10;
+            a[i+1]--;
+        }
+        c[i]=a[i]-b[i];
+    }
+    while(c[lenc]==0&amp;&amp;lenc&gt;1)lenc--;
+    for(int i=lenc;i&gt;=1;i--){
+        ans+=char(c[i]+'0');
+    }
+    return ans;
+}
+int main(){
+    string a,b;
+    cin&gt;&gt;a&gt;&gt;b;
+    if(a[0]=='-'&amp;&amp;b[0]=='-'){
+        cout&lt;&lt;'-'&lt;&lt;add(a.substr(1),b.substr(1));
+    }else if(a[0]=='-'||b[0]=='-'){
+        if(a[0]=='-'){
+            cout&lt;&lt;sub(b,a.substr(1));
+        }else{
+            cout&lt;&lt;sub(a,b.substr(1));
+        }
+    }else{
+        cout&lt;&lt;add(a,b);
+    }
+    return 0;
+}</code></pre>
+<hr>
+<div class="footer">
+<p align="center"><span class="tex-span">2025-2026</span>, ©️ longint's blog<br><a href="https://www.luogu.com.cn/user/1145420">longyitongxue</a></p>
+</div>
+</body>
+</html>
