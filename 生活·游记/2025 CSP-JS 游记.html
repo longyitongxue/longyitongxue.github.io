@@ -12,6 +12,55 @@
             }
         };
     </script>
+
+<style>
+/* ===== 全局默认 ===== */
+body, * {
+    cursor: url('../Cursors/arrow_m.cur'), auto;
+}
+
+/* ===== 链接悬停 ===== */
+a, a * {
+    cursor: url('../Cursors/hand_m.cur'), pointer !important;
+}
+
+/* ===== 文本输入框 ===== */
+input, textarea, [contenteditable] {
+    cursor: url('../Cursors/beam_m.cur'), text !important;
+}
+
+/* ===== 等待/加载 ===== */
+.waiting, .loading, [disabled] {
+    cursor: url('../Cursors/wait_m.cur'), wait !important;
+}
+
+/* ===== 禁止点击 ===== */
+.disabled, .no-click {
+    cursor: url('../Cursors/no_m.cur'), not-allowed !important;
+}
+
+/* ===== 拖拽 ===== */
+.draggable, [draggable] {
+    cursor: url('../Cursors/move_m.cur'), move !important;
+}
+
+/* ===== 十字准星 ===== */
+.crosshair, .cross {
+    cursor: url('../Cursors/cross_m.cur'), crosshair !important;
+}
+
+        .candidate {
+            cursor: url('../Cursors/up_m.cur'), default !important;
+        }
+
+/* ===== 四方向缩放 ===== */
+/* 调整大小光标 */
+.nwse-cursor { cursor: url('../Cursors/size2_m.cur'), nwse-resize !important; }   /* 左上-右下 */
+.nesw-cursor { cursor: url('../Cursors/size1_m.cur'), nesw-resize !important; }   /* 右上-左下 */
+.ew-cursor    { cursor: url('../Cursors/size3_m.cur'), ew-resize !important; }    /* 左右 */
+.ns-cursor    { cursor: url('../Cursors/size4_m.cur'), ns-resize !important; }    /* 上下 */
+</style>
+
 <style>
 table {
         margin: 0 auto;

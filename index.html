@@ -2,6 +2,53 @@
 <head>
 <meta charset="UTF-8">
 <title>首页</title>
+<style>
+/* ===== 全局默认 ===== */
+body, * {
+    cursor: url('Cursors/arrow_m.cur'), auto;
+}
+
+/* ===== 链接悬停 ===== */
+a, a * {
+    cursor: url('Cursors/hand_m.cur'), pointer !important;
+}
+
+/* ===== 文本输入框 ===== */
+input, textarea, [contenteditable] {
+    cursor: url('Cursors/beam_m.cur'), text !important;
+}
+
+/* ===== 等待/加载 ===== */
+.waiting, .loading, [disabled] {
+    cursor: url('Cursors/wait_m.cur'), wait !important;
+}
+
+/* ===== 禁止点击 ===== */
+.disabled, .no-click {
+    cursor: url('Cursors/no_m.cur'), not-allowed !important;
+}
+
+/* ===== 拖拽 ===== */
+.draggable, [draggable] {
+    cursor: url('Cursors/move_m.cur'), move !important;
+}
+
+/* ===== 十字准星 ===== */
+.crosshair, .cross {
+    cursor: url('Cursors/cross_m.cur'), crosshair !important;
+}
+
+        .candidate {
+            cursor: url('Cursors/up_m.cur'), default !important;
+        }
+
+/* ===== 四方向缩放 ===== */
+/* 调整大小光标 */
+.nwse-cursor { cursor: url('Cursors/size2_m.cur'), nwse-resize !important; }   /* 左上-右下 */
+.nesw-cursor { cursor: url('Cursors/size1_m.cur'), nesw-resize !important; }   /* 右上-左下 */
+.ew-cursor    { cursor: url('Cursors/size3_m.cur'), ew-resize !important; }    /* 左右 */
+.ns-cursor    { cursor: url('Cursors/size4_m.cur'), ns-resize !important; }    /* 上下 */
+</style>
 <script>
         MathJax = {
             tex: {
@@ -39,6 +86,361 @@
 <li><a href="题解/index.html">题解</a></li>
 <li><a href="学习笔记/index.html">学习笔记</a></li>
 </ul>
+<!-- ===== 公告窗口 ===== -->
+<style>
+    /* ---- 全局自定义光标（确保所有元素默认使用你的箭头） ---- */
+    body, * {
+        cursor: url('Cursors/arrow_m.cur'), auto !important;
+    }
+
+    /* ---- 链接光标 ---- */
+    a, a:hover, a * {
+        cursor: url('Cursors/hand_m.cur'), pointer !important;
+    }
+
+    /* ---- 拖动光标（用于标题栏） ---- */
+    .move-cursor, .title-bar, .title-bar * {
+        cursor: url('Cursors/move_m.cur'), move !important;
+    }
+
+    /* ---- 调整大小光标 ---- */
+    .nwse-cursor { cursor: url('Cursors/size1_m.cur'), nwse-resize !important; }
+    .nesw-cursor { cursor: url('Cursors/size3_m.cur'), nesw-resize !important; }
+    .ew-cursor    { cursor: url('Cursors/size4_m.cur'), ew-resize !important; }
+    .ns-cursor    { cursor: url('Cursors/size3_m.cur'), ns-resize !important; } /* 如果 size2_m.cur 不存在，用 size3 代替 */
+
+    /* ---- 窗口样式 ---- */
+    #notice-window {
+        position: fixed;
+        top: 80px;
+        left: 60px;
+        width: 450px;
+        min-width: 250px;
+        min-height: 200px;
+        background: #f0f0f0;
+        border: 3px outset #d0d0d0;
+        border-top-color: #ffffff;
+        border-left-color: #ffffff;
+        display: none;
+        flex-direction: column;
+        z-index: 9999;
+        font-family: "Times New Roman";
+        user-select: none;
+        box-shadow: 4px 4px 10px rgba(0,0,0,0.3);
+        cursor: url('Cursors/arrow_m.cur'), auto !important; /* 内容区默认箭头 */
+    }
+
+    /* 标题栏 */
+    #notice-window .title-bar {
+        padding: 4px 6px;
+        background: #000080;
+        color: #ffffff;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        cursor: url('Cursors/move_m.cur'), move !important; /* 拖动光标 */
+        flex-shrink: 0;
+        font-size: 14px;
+        font-weight: bold;
+        font-family: "Courier New", monospace;
+        border-bottom: 2px outset #d0d0d0;
+    }
+    #notice-window .title-bar span {
+        cursor: url('Cursors/move_m.cur'), move !important;
+    }
+    #notice-window .title-bar .close-btn {
+        cursor: url('Cursors/hand_m.cur'), pointer !important; /* 手型 */
+        font-size: 18px;
+        font-weight: bold;
+        padding: 0 6px;
+        color: #ffffff;
+        background: #000080;
+        border: 2px outset #d0d0d0;
+        line-height: 1.2;
+        font-family: "Courier New", monospace;
+        width: 22px;
+        text-align: center;
+    }
+    #notice-window .title-bar .close-btn:hover {
+        background: #c00000;
+        border-color: #ff0000;
+        color: #ffffff;
+    }
+
+    /* 内容区 */
+    #notice-window .content {
+        padding: 12px 16px;
+        flex: 1;
+        overflow-y: auto;
+        font-size: 14px;
+        line-height: 1.6;
+        color: #000000;
+        background: #f0f0f0;
+        cursor: url('Cursors/arrow_m.cur'), auto !important;
+        min-height: 100px;
+        border: 2px inset #d0d0d0;
+        border-top: none;
+        font-family: "Times New Roman", serif;
+    }
+
+    /* ---- 四边和四角拖拽手柄（加大尺寸便于操作） ---- */
+    #notice-window .resize-edge {
+        position: absolute;
+        background: transparent;
+        z-index: 999;
+    }
+    #notice-window .resize-edge.top,
+    #notice-window .resize-edge.bottom {
+        left: 10px;
+        right: 10px;
+        height: 14px;   /* 增大 */
+    }
+    #notice-window .resize-edge.top {
+        top: -7px;      /* 向外扩展 */
+        cursor: url('Cursors/size4_m.cur'), ns-resize !important;
+    }
+    #notice-window .resize-edge.bottom {
+        bottom: -7px;
+        cursor: url('Cursors/size4_m.cur'), ns-resize !important;
+    }
+    #notice-window .resize-edge.left,
+    #notice-window .resize-edge.right {
+        top: 10px;
+        bottom: 10px;
+        width: 14px;    /* 增大 */
+    }
+    #notice-window .resize-edge.left {
+        left: -7px;
+        cursor: url('Cursors/size3_m.cur'), ew-resize !important;
+    }
+    #notice-window .resize-edge.right {
+        right: -7px;
+        cursor: url('Cursors/size3_m.cur'), ew-resize !important;
+    }
+
+    #notice-window .resize-corner {
+        position: absolute;
+        width: 18px;    /* 增大 */
+        height: 18px;
+        background: transparent;
+        z-index: 1000;
+    }
+    #notice-window .resize-corner.nw {
+        top: -9px;
+        left: -9px;
+        cursor: url('Cursors/size2_m.cur'), nwse-resize !important;
+    }
+    #notice-window .resize-corner.ne {
+        top: -9px;
+        right: -9px;
+        cursor: url('Cursors/size1_m.cur'), nesw-resize !important;
+    }
+    #notice-window .resize-corner.sw {
+        bottom: -9px;
+        left: -9px;
+        cursor: url('Cursors/size1_m.cur'), nesw-resize !important;
+    }
+    #notice-window .resize-corner.se {
+        bottom: -9px;
+        right: -9px;
+        cursor: url('Cursors/size2_m.cur'), nwse-resize !important;
+    }
+
+    /* ---- 打开公告的链接（纯文本链接） ---- */
+    #notice-toggle-link {
+        color: #0366d6;
+        text-decoration: underline;
+        cursor: url('Cursors/hand_m.cur'), pointer !important;
+    }
+    #notice-toggle-link:hover {
+        text-decoration: none;
+    }
+</style>
+
+<!-- 公告窗口 -->
+<div id="notice-window">
+    <div class="title-bar" id="notice-title">
+        <span>公告</span>
+        <span class="close-btn" id="notice-close">×</span>
+    </div>
+    <div class="content" id="notice-content">
+<ul>
+<li><span class="tex-span">2025-？-？</span> 开始计划搞这个，但搁置了很久</li>
+
+        <li><span class="tex-span">2026-08-03</span> 正式建立，弄了两篇 <span class="tex-span">2025</span> 年的洛谷文章上来</li>
+<li><span class="tex-span">2026-08-04</span> 把 MathJax 引入，可以看到 $\LaTeX$ 了</li>
+<li><span class="tex-span">2026-08-06</span> 引入自定义鼠标指针以及这个公告<br><a href="测试.html">可以点击这个链接测试鼠标指针</a></li>
+</ul>
+    </div>
+    <!-- 四边 -->
+    <div class="resize-edge top"></div>
+    <div class="resize-edge bottom"></div>
+    <div class="resize-edge left"></div>
+    <div class="resize-edge right"></div>
+    <!-- 四角 -->
+    <div class="resize-corner nw"></div>
+    <div class="resize-corner ne"></div>
+    <div class="resize-corner sw"></div>
+    <div class="resize-corner se"></div>
+</div>
+<h2>公告</h2>
+<!-- 打开公告的纯链接 -->
+<a href="javascript:void(0)" id="notice-toggle-link">点击查看公告</a>
+
+<script>
+(function() {
+    const win = document.getElementById('notice-window');
+    const title = document.getElementById('notice-title');
+    const closeBtn = document.getElementById('notice-close');
+    const toggleLink = document.getElementById('notice-toggle-link');
+
+    function showWindow() {
+        win.style.display = 'flex';
+        const rect = win.getBoundingClientRect();
+        if (rect.left + rect.width > window.innerWidth) {
+            win.style.left = Math.max(0, window.innerWidth - rect.width) + 'px';
+        }
+        if (rect.top + rect.height > window.innerHeight) {
+            win.style.top = Math.max(0, window.innerHeight - rect.height) + 'px';
+        }
+    }
+    function hideWindow() {
+        win.style.display = 'none';
+    }
+
+    closeBtn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        hideWindow();
+    });
+    toggleLink.addEventListener('click', function(e) {
+        e.preventDefault();
+        showWindow();
+    });
+
+    // ===== 拖动 =====
+    let drag = false, ox = 0, oy = 0;
+    title.addEventListener('mousedown', function(e) {
+        if (e.button !== 0 || e.target === closeBtn) return;
+        drag = true;
+        const rect = win.getBoundingClientRect();
+        ox = e.clientX - rect.left;
+        oy = e.clientY - rect.top;
+        win.style.cursor = 'url("Cursors/move_m.cur"), move';
+        document.body.style.userSelect = 'none';
+        document.body.style.pointerEvents = 'none';
+        e.preventDefault();
+    });
+    document.addEventListener('mousemove', function(e) {
+        if (!drag) return;
+        let left = e.clientX - ox;
+        let top = e.clientY - oy;
+        left = Math.max(0, Math.min(left, window.innerWidth - win.offsetWidth));
+        top = Math.max(0, Math.min(top, window.innerHeight - win.offsetHeight));
+        win.style.left = left + 'px';
+        win.style.top = top + 'px';
+    });
+    document.addEventListener('mouseup', function() {
+        if (drag) {
+            drag = false;
+            win.style.cursor = '';
+            document.body.style.userSelect = '';
+            document.body.style.pointerEvents = '';
+        }
+    });
+
+    // ===== 调整大小（支持四边 + 四角） =====
+    const handles = document.querySelectorAll('.resize-edge, .resize-corner');
+    let resize = false, dir = '', sx, sy, sw, sh, sl, st;
+
+    handles.forEach(h => {
+        h.addEventListener('mousedown', function(e) {
+            e.stopPropagation();
+            e.preventDefault();
+            resize = true;
+            const rect = win.getBoundingClientRect();
+            sx = e.clientX;
+            sy = e.clientY;
+            sw = rect.width;
+            sh = rect.height;
+            sl = rect.left;
+            st = rect.top;
+
+            if (this.classList.contains('top')) dir = 'top';
+            else if (this.classList.contains('bottom')) dir = 'bottom';
+            else if (this.classList.contains('left')) dir = 'left';
+            else if (this.classList.contains('right')) dir = 'right';
+            else if (this.classList.contains('nw')) dir = 'nw';
+            else if (this.classList.contains('ne')) dir = 'ne';
+            else if (this.classList.contains('sw')) dir = 'sw';
+            else if (this.classList.contains('se')) dir = 'se';
+
+            document.body.style.userSelect = 'none';
+            document.body.style.pointerEvents = 'none';
+        });
+    });
+
+    document.addEventListener('mousemove', function(e) {
+        if (!resize) return;
+        const dx = e.clientX - sx;
+        const dy = e.clientY - sy;
+        let nw = sw, nh = sh, nl = sl, nt = st;
+        const minW = 200, minH = 120;
+
+        if (dir === 'right' || dir === 'se' || dir === 'ne') {
+            nw = Math.max(minW, sw + dx);
+        }
+        if (dir === 'left' || dir === 'nw' || dir === 'sw') {
+            nw = Math.max(minW, sw - dx);
+            nl = sl + sw - nw;
+        }
+        if (dir === 'bottom' || dir === 'se' || dir === 'sw') {
+            nh = Math.max(minH, sh + dy);
+        }
+        if (dir === 'top' || dir === 'nw' || dir === 'ne') {
+            nh = Math.max(minH, sh - dy);
+            nt = st + sh - nh;
+        }
+
+        if (nl < 0) { nw += nl; nl = 0; }
+        if (nt < 0) { nh += nt; nt = 0; }
+        if (nl + nw > window.innerWidth) nw = window.innerWidth - nl;
+        if (nt + nh > window.innerHeight) nh = window.innerHeight - nt;
+
+        win.style.width = nw + 'px';
+        win.style.height = nh + 'px';
+        win.style.left = nl + 'px';
+        win.style.top = nt + 'px';
+    });
+
+    document.addEventListener('mouseup', function() {
+        if (resize) {
+            resize = false;
+            document.body.style.userSelect = '';
+            document.body.style.pointerEvents = '';
+        }
+    });
+
+    window.addEventListener('resize', function() {
+        const rect = win.getBoundingClientRect();
+        if (rect.left + rect.width > window.innerWidth) {
+            win.style.left = Math.max(0, window.innerWidth - rect.width) + 'px';
+        }
+        if (rect.top + rect.height > window.innerHeight) {
+            win.style.top = Math.max(0, window.innerHeight - rect.height) + 'px';
+        }
+    });
+
+    setTimeout(() => {
+        const rect = win.getBoundingClientRect();
+        if (rect.left + rect.width > window.innerWidth) {
+            win.style.left = Math.max(0, window.innerWidth - rect.width) + 'px';
+        }
+        if (rect.top + rect.height > window.innerHeight) {
+            win.style.top = Math.max(0, window.innerHeight - rect.height) + 'px';
+        }
+    }, 100);
+})();
+</script>
 <hr>
 
 <div class="footer">
