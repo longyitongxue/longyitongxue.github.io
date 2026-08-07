@@ -3,6 +3,70 @@
 <meta charset="UTF-8">
 <title>首页</title>
 <style>
+    /* 全屏容器，不干扰点击 */
+    #click-effect-container {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: 9999;
+    }
+
+    /* 单个十字架 */
+    .click-crosshair {
+        position: absolute;
+        width: 26px;
+        height: 26px;
+        transform: translate(-50%, -50%); /* 中心对准鼠标 */
+    }
+
+    /* 水平线和垂直线 */
+    .click-crosshair::before,
+    .click-crosshair::after {
+        content: '';
+        position: absolute;
+        background-color: #000; /* 黑色，可根据需要改成 #fff 或其它 */
+    }
+    .click-crosshair::before {
+        top: 50%;
+        left: 0;
+        width: 100%;
+        height: 2px;
+        transform: translateY(-50%);
+    }
+    .click-crosshair::after {
+        top: 0;
+        left: 50%;
+        width: 2px;
+        height: 100%;
+        transform: translateX(-50%);
+    }
+</style>
+
+<div id="click-effect-container"></div>
+
+<script>
+    document.addEventListener('click', function(e) {
+        const x = e.clientX;
+        const y = e.clientY;
+
+        const cross = document.createElement('div');
+        cross.className = 'click-crosshair';
+        cross.style.left = x + 'px';
+        cross.style.top = y + 'px';
+
+        const container = document.getElementById('click-effect-container');
+        container.appendChild(cross);
+
+        // 闪现 80ms 后立即移除（可调整这个数值）
+        setTimeout(() => {
+            cross.remove();
+        }, 80);
+    });
+</script>
+<style>
 /* ===== 全局默认 ===== */
 body, * {
     cursor: url('Cursors/arrow_m.cur'), auto;
@@ -76,6 +140,26 @@ input, textarea, [contenteditable] {
 
 <h1>longint's blog</h1>
 
+<h2>比赛倒计时</h2>
+
+<p>
+  距 <strong>CSP-J/S 2026 第一轮</strong> 还剩 <strong><span id="days1"></span></strong> 天
+  <br>
+  距 <strong>CSP-J/S 2026 第二轮</strong> 还剩 <strong><span id="days2"></span></strong> 天
+</p>
+
+<script>
+  // 计算第一轮（2026-09-19）
+  var t1 = new Date(2026, 8, 19);
+  var now = new Date();
+  var d1 = Math.ceil((t1 - now) / (1000*60*60*24));
+  document.getElementById('days1').textContent = d1 > 0 ? d1 : 0;
+
+  // 计算第二轮（2026-10-31）
+  var t2 = new Date(2026, 9, 31);
+  var d2 = Math.ceil((t2 - now) / (1000*60*60*24));
+  document.getElementById('days2').textContent = d2 > 0 ? d2 : 0;
+</script>
 
 <h2>个签</h2>
 <p>CSP-J&CSP-S $2026$ RP++ || GD || $2013$ || $13$-year-old boy || Grade $8$ || 你是喜爱 OI，还是热爱 OI？</p>
