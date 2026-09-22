@@ -146,6 +146,9 @@ input, textarea, [contenteditable] {
   距 <strong>CSP-J/S 2026 第一轮</strong> 还剩 <strong><span id="days1"></span></strong> 天
   <br>
   距 <strong>CSP-J/S 2026 第二轮</strong> 还剩 <strong><span id="days2"></span></strong> 天
+    <br>
+    
+  距 <strong>CSP-J/S 2026 第二轮</strong> 还剩 <strong><span id="days3"></span></strong> 天
 </p>
 
 <script>
@@ -159,6 +162,11 @@ input, textarea, [contenteditable] {
   var t2 = new Date(2026, 9, 31);
   var d2 = Math.ceil((t2 - now) / (1000*60*60*24));
   document.getElementById('days2').textContent = d2 > 0 ? d2 : 0;
+
+    
+  var t3 = new Date(2026, 10, 28);
+  var d3 = Math.ceil((t3 - now) / (1000*60*60*24));
+  document.getElementById('days3').textContent = d3 > 0 ? d3 : 0;
 </script>
 
 <h2>个签</h2>
@@ -358,6 +366,7 @@ input, textarea, [contenteditable] {
 <li><span class="tex-span">2026-08-04</span> 把 MathJax 引入，可以看到 $\LaTeX$ 了</li>
 <li><span class="tex-span">2026-08-06</span> 引入自定义鼠标指针以及这个公告<br><a href="测试.html">可以点击这个链接测试鼠标指针</a></li>
 <li><span class="tex-span">2026-08-15</span> 更新 MathJax 的版本，可以发现 $\LaTeX$ 可以选择文本了（虽然直接复制会很难受）</li>
+<li><span class="tex-span">2026-09-22</span> 更新 文件保存站</li>
 </ul>
     </div>
     <!-- 四边 -->
