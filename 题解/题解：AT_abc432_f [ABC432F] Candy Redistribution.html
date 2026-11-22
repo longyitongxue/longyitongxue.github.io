@@ -1,0 +1,168 @@
+﻿<head>
+<title></title>
+</head>
+<body>
+<p>HaoBa 题，发现自己正好错过了这场 ABC，一年后我为这题写题解。</p>
+
+<hr>
+
+<p>
+
+首先如果糖果总数不是 <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>N</mi>
+</math> 的倍数的话，肯定会有孩子多拿或少拿糖果，无解，输出 <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mo>&#x2212;<!-- − --></mo>
+  <mn>1</mn>
+</math>。然后我们求出每个孩子当前拥有的糖果数与平均值的差，本题的目标就是通过转移糖果，把这些差值全部变成 <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mn>0</mn>
+</math>。
+
+</p>
+
+<p>
+然后我们有一个结论——一组与平均值的差值和为 <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mn>0</mn>
+</math> 的孩子，最少只要人数 <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mo>&#x2212;<!-- − --></mo>
+  <mn>1</mn>
+</math> 次操作：我们选组内一个差值为负数的孩子当中转站，把组内所有差值为正数的孩子的糖果全部搬给这个中转站的孩子，再让中转站用糖果补上组内其他差值为负数的孩子的缺口。由于每个组的人数加起来肯定是 <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>N</mi>
+</math>，前面又有每组操作次数为人数 <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mo>&#x2212;<!-- − --></mo>
+  <mn>1</mn>
+</math>，那么最终答案就是 <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>N</mi>
+  <mo>&#x2212;<!-- − --></mo>
+</math> 组数。显然我们想要让答案最小，就要让分组尽可能多。我们找到一组差值和为 <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mn>0</mn>
+</math> 的孩子就马上分一组，可以证明这种方法能让我们的分组数尽可能多。
+</p>
+
+<p>
+由于题目满足 <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>N</mi>
+  <mo>&#x2264;<!-- ≤ --></mo>
+  <mn>20</mn>
+</math>，我们使用状态压缩 DP 来实现上面的过程。我们用 <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mtext>mask</mtext>
+</math> 表示已经用掉了哪些孩子，定义 <math xmlns="http://www.w3.org/1998/Math/MathML"><mi>d</mi><msub><mi>p</mi><mrow class="MJX-TeXAtom-ORD"><mtext>mask</mtext></math> 为 <math xmlns="http://www.w3.org/1998/Math/MathML"><mtext>mask</mtext></math> 里所有孩子的差值最多能分出来多少组。接着我们预处理 <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <msub>
+    <mtext>sum</mtext>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mtext>mask</mtext>
+    </mrow>
+  </msub>
+</math>，表示 <math xmlns="http://www.w3.org/1998/Math/MathML"><mtext>mask</mtext></math> 里所有差值的和，递推式很显然就是 <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <msub>
+    <mtext>sum</mtext>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mtext>mask</mtext>
+    </mrow>
+  </msub>
+  <mo>=</mo>
+  <msub>
+    <mtext>sum</mtext>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mtext>mask</mtext>
+      <mo class="MJX-variant">&#x2216;<!-- ∖ --></mo>
+      <mrow class="MJX-TeXAtom-ORD">
+        <mo>{</mo>
+        <mi>i</mi>
+        <mo>}</mo>
+      </mrow>
+    </mrow>
+  </msub>
+  <mo>+</mo>
+</math> 当前位孩子的差值。如果当前这个 <math xmlns="http://www.w3.org/1998/Math/MathML">
+    <mtext>sum</mtext>
+</math> 正好是 <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mn>0</mn>
+</math>，我们就立马切出一组，组数 <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mo>+</mo>
+  <mn>1</mn>
+</math>，否则就不增加组。因此状态转移方程就是 <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>d</mi>
+  <msub>
+    <mi>p</mi>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mtext>mask</mtext>
+    </mrow>
+  </msub>
+  <mo>=</mo>
+  <mo movablelimits="true" form="prefix">max</mo>
+  <mo stretchy="false">(</mo>
+  <mi>d</mi>
+  <msub>
+    <mi>p</mi>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mtext>mask</mtext>
+      <mo class="MJX-variant">&#x2216;<!-- ∖ --></mo>
+      <mrow class="MJX-TeXAtom-ORD">
+        <mo>{</mo>
+        <mi>i</mi>
+        <mo>}</mo>
+      </mrow>
+    </mrow>
+  </msub>
+  <mo>+</mo>
+  <mo stretchy="false">[</mo>
+  <msub>
+    <mtext>sum</mtext>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mtext>mask</mtext>
+    </mrow>
+  </msub>
+  <mo>=</mo>
+  <mn>0</mn>
+  <mo stretchy="false">]</mo>
+  <mo stretchy="false">)</mo>
+</math>。
+</p>
+
+<p>
+最后，我们用一个 <math xmlns="http://www.w3.org/1998/Math/MathML">
+    <mtext>ans</mtext>
+</math> 数组记下让 <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>d</mi>
+  <msub>
+    <mi>p</mi>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mtext>mask</mtext>
+    </mrow>
+  </msub>
+</math> 取到最大值时最后加入的孩子 <math xmlns="http://www.w3.org/1998/Math/MathML">
+    <mi>i</mi>
+</math>。之后我们就根据上面得到的分组，模拟糖果调整的具体过程并输出操作即可。
+</p>
+
+<p>
+时间复杂度 <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi class="MJX-tex-caligraphic" mathvariant="script">O</mi>
+  </mrow>
+  <mo stretchy="false">(</mo>
+  <mi>N</mi>
+  <mo>&#x22C5;<!-- ⋅ --></mo>
+  <msup>
+    <mn>2</mn>
+    <mi>N</mi>
+  </msup>
+  <mo stretchy="false">)</mo>
+</math>，空间复杂度 <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi class="MJX-tex-caligraphic" mathvariant="script">O</mi>
+  </mrow>
+  <mo stretchy="false">(</mo>
+  <msup>
+    <mn>2</mn>
+    <mi>N</mi>
+  </msup>
+  <mo stretchy="false">)</mo>
+</math>，可以通过本题。
+</p>
+
+<p>AC Code：<a href="https://atcoder.jp/contests/abc432/submissions/80868382">https://atcoder.jp/contests/abc432/submissions/80868382</a></p>
+
+<p><em>PS：本文使用了 AI 优化表达，但本文的整体内容均为本人所写。</em></p>
+
+</body>
